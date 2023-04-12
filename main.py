@@ -16,6 +16,7 @@ db = sqlite3.connect('tokens.db')
 typing = []
 intents = discord.Intents.default()
 intents.members = True
+intents.presences = True
 intents.dm_messages = True
 
 class App(discord.Client):
