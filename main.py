@@ -14,7 +14,9 @@ load_dotenv()
 openai.api_key = os.environ['OPENAI_API_KEY']
 db = sqlite3.connect('tokens.db')
 typing = []
-intents = discord.Intents.all()
+intents = discord.Intents.default()
+intents.members = True
+intents.dm_messages = True
 
 class App(discord.Client):
     def __init__(self):
@@ -37,6 +39,7 @@ async def typing_loop():
 @app.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(app))
+    await app.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="your direct messages!"))
     typing_loop.start()
 
 encoding = tiktoken.get_encoding('cl100k_base')
