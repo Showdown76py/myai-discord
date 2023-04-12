@@ -14,3 +14,5 @@ MAX_TOKEN_PER_REQUEST = [Maximum tokens per request] (recommended: 1800-2000)
 TOKEN = [Your Discord bot's token]
 OPENAI_API_KEY = [OpenAI Token -- can be found at https://platform.openai.com/account/api-keys]
 ```
+
+#### The `tokens.db` database is blank and contains no data.

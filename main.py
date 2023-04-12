@@ -51,7 +51,6 @@ def num_tokens_from_string(string: str) -> int:
 
 @app.event
 async def on_message(message: discord.Message):
-    print('msg received')
     if not isinstance(message.channel, discord.DMChannel): return
     if message.author.id == app.user.id: return
     try:
@@ -86,7 +85,6 @@ async def on_message(message: discord.Message):
         for arg in arguments.keys(): bprompt = bprompt.replace(f'|{arg}|', arguments[arg])
     
         previous_tokens = 200+len(bprompt)+message_token_usage
-        print(bprompt)
         # (message_id, user_id, content, token, role, timestamp)
         # order by timestamp (most recent to least recent)
         usable_messages = []
