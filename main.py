@@ -1,4 +1,5 @@
 import time
+import traceback
 import discord
 from discord import app_commands
 from discord.ext import tasks
@@ -57,8 +58,31 @@ async def on_message(message: discord.Message):
         max_token = int(os.environ['MAX_TOKEN_PER_REQUEST'])
         with open('base-prompt.txt', 'r', encoding='utf-8') as f:
             bprompt = f.read()
-        previous_tokens = 200+len(bprompt)+message_token_usage
 
+        activs = ""
+
+        for activity in message.author.mutual_guilds[0].get_member(message.author.id).activities:
+            if isinstance(activity, discord.Spotify):
+                activs += f"- Listening to {activity.title} by {activity.artist} on Spotify\n"
+            elif isinstance(activity, discord.Streaming):
+                activs += f"- Streaming {activity.name}\n"
+            elif isinstance(activity, discord.Game):
+                activs += f"- Playing {activity.name}\n"
+            elif isinstance(activity, discord.CustomActivity):
+                activs += f"- Custom Activity: {activity.name}\n"
+            elif isinstance(activity, discord.Activity):
+                activs += f"- {activity.type.name.capitalize()} {activity.name}\n"
+
+        arguments = {
+            "username": message.author.name,
+            "status": message.author.mutual_guilds[0].get_member(message.author.id).raw_status,
+            "activities": activs.strip('\n')
+        }
+
+        for arg in arguments.keys(): bprompt = bprompt.replace(f'|{arg}|', arguments[arg])
+    
+        previous_tokens = 200+len(bprompt)+message_token_usage
+        print(bprompt)
         # (message_id, user_id, content, token, role, timestamp)
         # order by timestamp (most recent to least recent)
         usable_messages = []
@@ -92,6 +116,7 @@ async def on_message(message: discord.Message):
         c.execute('INSERT INTO message_history VALUES (?, ?, ?, ?, ?, ?)', (r.id, message.author.id, response, completion_used_tokens, 'assistant', int(time.time())))
         db.commit()
     except Exception as e:
+        traceback.print_exc()
         if message.channel in typing: typing.remove(message.channel)
         await message.reply('I just uncountered an issue. Can you please report this problem to the administrator of the bot, or try again later?\n```py\n'+str(e)+'```')
 
