@@ -23,6 +23,7 @@ class App(discord.Client):
     def __init__(self):
         super().__init__(intents=intents)
         self.tree = app_commands.CommandTree(client=self)
+        print('Running')
 
     async def setup_hook(self) -> None:
         return
