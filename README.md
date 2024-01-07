@@ -1,3 +1,4 @@
+# This project is no longer maintained on GitHub. [See here](https://git.tarkacore.dev/showdown/myai-discord)
 # myai-discord
 Alternative to "My AI", by Snapchat, but on Discord.
 ## Installation Steps
